@@ -1,0 +1,49 @@
+# install-openvpn.yml
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Update all packages
+      yum:
+        name: "*"
+        state: latest
+    - name: Remove existing versions of Docker
+      yum:
+        name:
+          - docker
+          - docker-client
+          - docker-client-latest
+          - docker-common
+          - docker-latest
+          - docker-latest-logrotate
+          - docker-logrotate
+          - docker-engine
+        state: absent
+    - name: Install packages required by Docker
+      yum:
+        name:
+          - yum-utils
+          - device-mapper-persistent-data
+          - lvm2
+        state: present
+    - name: Setup Docker repository
+      shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    - name: Install Docker
+      yum:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        enabled: yes
+        state: started
+    - name: Launch and configure OpenVPN
+      script: start-container.sh
+    - name: Copy ovpn file to local computer
+      fetch:
+        dest: ../../
+        src: /etc/ovpn/client.ovpn
+        flat: yes

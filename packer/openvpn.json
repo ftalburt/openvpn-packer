@@ -1,0 +1,30 @@
+{
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "ami_name": "openvpn-{{timestamp}}",
+      "encrypt_boot": true,
+      "instance_type": "t3.micro",
+      "region": "us-east-1",
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "CentOS Linux 7 x86_64 HVM EBS*",
+          "root-device-type": "ebs"
+        },
+        "owners": ["410186602215"],
+        "most_recent": true
+      },
+      "ssh_username": "centos",
+      "tags": {
+        "Application": "openvpn"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "playbook_file": "../ansible/playbooks/install-openvpn.yml"
+    }
+  ]
+}

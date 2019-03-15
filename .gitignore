@@ -1,0 +1,2 @@
+# Ignore generated OpenVPN config file
+*.ovpn
